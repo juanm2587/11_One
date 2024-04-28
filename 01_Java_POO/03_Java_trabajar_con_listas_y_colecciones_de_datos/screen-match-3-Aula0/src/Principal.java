@@ -70,7 +70,7 @@ public class Principal {
     System.out.println(listaDePeliculas.toString());
     /*si llamamos de esta manera nos va a mostrar la referencia a memoria del objeto
     reescribimos el toString en la clase Pelicula para que nos devuelva la infor del objeto
-    
+
      */
 
     System.out.println("el toString de la pelicula es: "+ listaDePeliculas.get(0));

@@ -9,7 +9,8 @@ public class Pelicula extends Titulo implements Clasificable {
         return director;
     }
 
-    /*creamos un constructor que tenga como parametro el nombre para pasar
+    /*
+    creamos un constructor que tenga como parametro el nombre para pasar
     el nombre al construir el objeto y lo mismo hicimos con serie
      */
     public Pelicula(String nombre) {
