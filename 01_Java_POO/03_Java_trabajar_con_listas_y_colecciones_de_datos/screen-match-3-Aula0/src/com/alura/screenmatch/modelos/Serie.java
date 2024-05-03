@@ -8,8 +8,9 @@ public class Serie extends Titulo {
 
     /*creamos un constructor que tenga como parametro el nombre para pasar
     el nombre al construir el objeto y lo mismo hicimos con serie*/
-    public Serie(String nombre) {
-        this.setNombre(nombre);
+
+    public Serie(String nombre, int fechaDeLanzamiento) {
+        super(nombre, fechaDeLanzamiento);
     }
 
     public int getTemporadas() {
@@ -47,5 +48,10 @@ public class Serie extends Titulo {
     @Override
     public int getDuracionEnMinutos() {
         return temporadas * episodiosPorTemporada * minutosPorEpisodio;
+    }
+
+    @Override
+    public String toString() {
+        return "Serie: "+this.getNombre()+" ("+this.getFechaDeLanzamiento()+")";
     }
 }

@@ -1,12 +1,17 @@
 package com.alura.screenmatch.modelos;
 
-public class Titulo {
+public class Titulo implements Comparable<Titulo>{
     private String nombre;
     private int fechaDeLanzamiento;
     private boolean incluidoEnElPlan;
     private double sumaDeLasEvaluaciones;
     private int totalDeEvaluaciones;
     private int duracionEnMinutos;
+
+    public Titulo(String nombre, int fechaDeLanzamiento) {
+        this.nombre = nombre;
+        this.fechaDeLanzamiento = fechaDeLanzamiento;
+    }
 
     public String getNombre() {
         return nombre;
@@ -56,5 +61,16 @@ public class Titulo {
 
     public double calculaMediaEvaluaciones(){
         return sumaDeLasEvaluaciones / totalDeEvaluaciones;
+    }
+
+    /*usamos "implements Comparable<Titulo>" en la clase linea 3, implementamos el metodo sugerido
+    esto para ordenar una lista de titulos
+    * */
+    @Override
+    public int compareTo(Titulo otroTitulo) {
+        return this.getNombre().compareTo(otroTitulo.getNombre());
+        /*aca comparamos con el metodo ".compareTo()" para ordenarlos
+        y pasamos por parametro "otroTitulo.getNombre()"
+        * */
     }
 }

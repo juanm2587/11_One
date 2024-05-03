@@ -5,6 +5,10 @@ import com.alura.screenmatch.calculos.Clasificable;
 public class Pelicula extends Titulo implements Clasificable {
     private String director;
 
+    public Pelicula(String nombre, int fechaDeLanzamiento) {
+        super(nombre, fechaDeLanzamiento);
+    }
+
     public String getDirector() {
         return director;
     }
@@ -13,9 +17,6 @@ public class Pelicula extends Titulo implements Clasificable {
     creamos un constructor que tenga como parametro el nombre para pasar
     el nombre al construir el objeto y lo mismo hicimos con serie
      */
-    public Pelicula(String nombre) {
-        this.setNombre(nombre);
-    }
 
     public void setDirector(String director) {
         this.director = director;
