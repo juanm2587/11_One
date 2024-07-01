@@ -9,10 +9,7 @@ import com.aluracursos.screenmatch.service.ConvierteDatos;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -38,7 +35,7 @@ public class Principal {
             DatosTemporada datosTemporada = conversor.obtenerDatos(json, DatosTemporada.class);
             temporadas.add(datosTemporada);
         }
-        temporadas.forEach(System.out::println);
+       // temporadas.forEach(System.out::println);
 
         /* //Mostrar solo el titulo de los episodios para las temporadas
         for (int i = 0; i < datos.totalTemporadas(); i++) {
@@ -62,7 +59,7 @@ public class Principal {
 
 
 
-
+        /*
         //top 5 episodios
         System.out.println("Top 5 episodios");
         datosEpisodios.stream()
@@ -74,6 +71,7 @@ public class Principal {
                 .peek(e-> System.out.println("Tercero filtro mayusculas (Mayor>Menor)"+e))
                 .limit(5)
                 .forEach(System.out::println);
+        */
         //convirtiendo los datos a una Lista del tipo Episodio
 
         List<Episodio> episodios=temporadas.stream()
@@ -83,13 +81,13 @@ public class Principal {
         //episodios.forEach(System.out::println);
 
         //busqueda de episodiosa partir de x anio
-        System.out.println("ingrese el anio a partir del cual quieres ver los episodios");
-        var fecha=teclado.nextInt();
-        teclado.nextLine();
+        //System.out.println("ingrese el anio a partir del cual quieres ver los episodios");
+        //var fecha=teclado.nextInt();
+        //teclado.nextLine();
 
-        LocalDate fechaBusqueda=LocalDate.of(fecha,1,1);
+        //LocalDate fechaBusqueda=LocalDate.of(fecha,1,1);
 
-        DateTimeFormatter dtf =DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        //DateTimeFormatter dtf =DateTimeFormatter.ofPattern("dd/MM/yyyy");
         /*
         episodios.stream()
                 .filter(e->e.getFechaDeLanzamiento() !=null && e.getFechaDeLanzamiento().isAfter(fechaBusqueda))
@@ -98,8 +96,8 @@ public class Principal {
                                 "Episodio "+e.getTitulo()+
                                 "Fecha de lanzamiento "+e.getFechaDeLanzamiento().format(dtf)
                 ));
-                */
-    /*
+
+
     ¿Y qué es la función Peek?
     La función "peek" es una operación intermedia de una stream.
     Una operación intermedia es aquella que procesa los datos del stream pero no la finaliza, es decir,
@@ -124,13 +122,33 @@ public class Principal {
 
     System.out.println("La suma de los números es: " + suma);
 
-     */
 
+        //Buscar episodios por un pedazo de titulo
+        System.out.println("Escriba el titulo del episodio que desea ver");
+        var pedazoTitulo=teclado.nextLine();
+        Optional<Episodio> episodioBuscado=episodios.stream()
+                .filter(e->e.getTitulo().toUpperCase().contains(pedazoTitulo.toUpperCase()))
+                .findFirst();
+        if(episodioBuscado.isPresent()){
+            System.out.println("Episodio encontrado");
+            System.out.println("Los datos son: "+episodioBuscado.get());
+        }else {
+            System.out.println("Episodio no encontrado");
+        }*/
 
+        Map<Integer,Double>evaluacionesPorTemporada=episodios.stream()
+                .filter(e->e.getEvaluacion()>0.0)//filtramos por valor de la evaluacion
+                .collect(Collectors.groupingBy(Episodio::getTemporada,//usamos Collectors
+                        Collectors.averagingDouble(Episodio::getEvaluacion)));
+        System.out.println(evaluacionesPorTemporada);
 
-
-
-
+        DoubleSummaryStatistics est=episodios.stream()//nos permite generar stadisticas de forma preestalecida
+                .filter(e->e.getEvaluacion()>0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getEvaluacion));//colectamos datos de nuestra evaluacion
+        System.out.println("La media de las evaluaciones es: "+est.getAverage());
+        System.out.println("Episodio Mejor evaluado es: "+est.getMax());
+        System.out.println("Episodio peor evaluado es: "+est.getMin());
+        System.out.println("La cantidad es: "+est.getCount());
 
     }
 }
