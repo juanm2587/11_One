@@ -2,18 +2,37 @@ package com.aluracursos.screenmatch.model;
 
 import com.aluracursos.screenmatch.service.ConsultaChatGPT;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.OptionalDouble;
-
+@Entity
+@Table(name="series")
 public class Serie {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	@Column(unique = true)
 	private String titulo;
 	private Integer totalTemporadas;
 	private Double evaluacion;
 	private String poster;
+	@Enumerated(EnumType.STRING)//es el enumerado
 	private Categoria genero;
 	private String actores;
 	private String sinopsis;
 	//Ctrl+F buscamos y seleccionamos las concurencia que queremos cambiar
+	/*@Transient sirve para no mapear esta lista para que no la usemos como ya hicimos la
+	relacion entre serie y episodio ya no necesitamos la anotation
+	 */
+	//hace la relacion aca y tambien en la otra clase
+	@OneToMany(mappedBy = "serie",cascade = CascadeType.ALL, fetch = FetchType.EAGER)// fetch agrega de forma peresosa o anciosa
+	private List<Episodio>episodios;
+
+	public Serie(){
+		//JPA necesita tener un constructor predeterminado o vacio para funcionar
+	}
+
 	public Serie(DatosSerie datosSerie){
 		this.titulo=datosSerie.titulo();
 		this.totalTemporadas=datosSerie.totalTemporadas();
@@ -37,7 +56,25 @@ public class Serie {
 				", evaluacion='" + evaluacion + '\'' +
 				", poster='" + poster + '\'' +
 				", actores='" + actores + '\'' +
-				", sinopsis='" + sinopsis + '\'';
+				", sinopsis='" + sinopsis + '\''+
+				", episodios='" + episodios + '\'';
+	}
+
+	public List<Episodio> getEpisodios() {
+		return episodios;
+	}
+
+	public void setEpisodios(List<Episodio> episodios) {
+		episodios.forEach(e->e.setSerie(this));
+		this.episodios = episodios;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getTitulo() {
