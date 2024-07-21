@@ -84,7 +84,126 @@ Estas tecnologías hacían que la Vista del MVC estuviera dentro de la aplicaci�
 
 Ahora que sabes la teoría, es hora de poner manos a la obra y empezar a practicar. Y recuerda: cada nuevo concepto aprendido es un paso adelante en tu trayectoria como desarrollador. ¡Buena suerte!
 
-## 
+## Para saber más: estructuras de paquetes en proyectos Java
+Durante nuestras clases, estamos utilizando una división de paquetes muy específica: para cada parte del proyecto, o capa, creamos un paquete diferente. Por eso trabajamos con controller, model, repository y otros paquetes. Este estilo de organización es llamado Package by Layer, o paquetes por capas.
+
+Package by Layer es un enfoque que dice que debes dividir tu código basado en sus responsabilidades funcionales. Esto puede incluir cosas como 'model', 'view', 'controller' y 'repository'. Cada capa tiene una responsabilidad específica. Por ejemplo, la capa 'view' maneja la interfaz de usuario, mientras que la capa 'controller' se encargará de la lógica de negocio.
+
+Vamos a considerar un ejemplo simple. Digamos que estamos construyendo una aplicación de blog. Con el enfoque 'Package by Layer', podríamos tener paquetes así:
+```java
+com.myblog
+    .controller
+        .PostController
+        .CommentController
+    .model
+        .Post
+        .Comment
+    .repository
+        .PostRepository
+        .CommentRepository
+```
+En este ejemplo, todas las clases relacionadas con los posts del blog están esparcidas por diferentes paquetes, basados en la función que desempeñan. Lo mismo se aplica a las clases de comentarios.
+
+Sin embargo, existe otro tipo de organización, utilizado, por ejemplo, en la formación de Spring Boot. Se llama Package by Feature, o paquetes por funcionalidades. Sugiere que debes organizar tu código basado en las características individuales de tu aplicación. En lugar de dividir tu código basado en su función, lo divides basado en la característica que implementa.
+
+Usando el mismo ejemplo del blog, con 'Package by Feature', tendríamos algo así:
+```java
+com.myblog
+    .post
+        .Post
+        .PostController
+        .PostRepository
+    .comment
+        .Comment
+        .CommentController
+        .CommentRepository
+```
+En este ejemplo, todas las clases relacionadas con los posts están en el mismo paquete. Lo mismo se aplica a los comentarios. Cada paquete es autosuficiente y contiene todo lo que necesita para implementar una característica específica.
+
+#### Cuándo usar cada uno
+Entonces, ¿qué enfoque deberías usar? Depende. 'Package by Layer' puede ser útil si tienes un equipo grande y complejo, en el cual muchas personas pueden estar trabajando en diferentes capas al mismo tiempo. Separa las responsabilidades claramente, por lo tanto, es menos probable que las personas se pisen entre sí.
+
+Sin embargo, 'Package by Feature' es a menudo preferido para proyectos más pequeños y ágiles. Mantiene todas las clases relacionadas con una característica juntas, lo que hace más fácil para un desarrollador entender completamente una característica. También es más fácil de mantener, porque cuando una característica es añadida o removida, sabes exactamente dónde están todas las clases relacionadas.
+
+Aquí, optamos por utilizar Package by Layer, pero es interesante que analices todas las condiciones para ver la estructura que mejor se adapta a tu proyecto.
+
+## Preparando el ambiente: código de la clase Cors Configuration
+En el vídeo anterior, utilizamos la clase CorsConfiguration para manejar el error de CORS. Copia el código de la clase y úsalo en tu aplicación con nosotros.
+```java
+package com.aluracursos.screenmatch.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfiguration implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://127.0.0.1:5501")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+    }
+}
+```
+## Para saber más: anotaciones de Spring Boot
+Spring Framework ofrece una amplia gama de anotaciones para el desarrollo de aplicaciones web. Aquí están algunas de las anotaciones más comunes e importantes usadas en Spring para aplicaciones web:
+
+- @Controller: Usada para marcar una clase como un controlador en el patrón MVC (Model-View-Controller). Esta anotación se utiliza para recibir peticiones y manejar lógica de negocios.
+- @RestController: Una variante de @Controller, específica para APIs RESTful. Combina las anotaciones @Controller y @ResponseBody, señalando que cada método retorna un objeto serializado directamente en JSON o XML como respuesta.
+- @RequestMapping: Define mapeos entre URLs y métodos de controlador. Especifica las URLs a las que un método del controlador debe responder y los métodos HTTP correspondientes (GET, POST, PUT, DELETE, etc.).
+- @GetMapping, @PostMapping, @PutMapping, @DeleteMapping: Abreviaturas para las operaciones HTTP GET, POST, PUT y DELETE, respectivamente, en métodos de controlador.
+- @RequestParam: Usada para mapear los parámetros de petición HTTP a los parámetros del método del controlador.
+- @PathVariable: Usada para vincular variables de plantilla de URL a parámetros de métodos de controlador.
+- @RequestBody: Utilizada para mapear el cuerpo de la petición HTTP a un objeto de entrada del método del controlador.
+- @ResponseBody: Indica que el valor retornado por el método del controlador debe ser usado directamente como cuerpo de la respuesta HTTP.
+- @Valid y @Validated: Utilizadas para activar la validación de entrada en el lado del servidor. Generalmente combinadas con anotaciones de validación, como @NotNull, @Size, @Min, @Max, entre otras.
+- @CrossOrigin: Utilizada para configurar permisos de acceso a recursos de diferentes orígenes (CORS - Cross-Origin Resource Sharing).
+
+Estas son algunas de las anotaciones más usadas en el desarrollo de aplicaciones web con Spring. La aplicación de estas puede variar dependiendo de las necesidades específicas de tu aplicación y de las versiones de Spring usadas.
+## Preparando el ambiente: método específico para convertir de Serie para SerieDTO
+En el video anterior, vimos que en dos métodos hubo la necesidad de recibir una lista de objetos del tipo Serie y transformarlos en una lista de objetos del tipo SerieDTO. Para estos casos, es siempre recomendable crear métodos específicos con el fin de evitar redundancia de código en la clase. De la misma forma, si hay necesidad de alteración, la misma podrá ser hecha en un único punto.
+
+Mira abajo cómo quedó nuestro método para transformar esa lista:
+```java
+private List<SerieDTO> convierteDatos(List<Serie> serie){
+        return serie.stream()
+                .map(s -> new SerieDTO(s.getId(), s.getTitulo(), s.getTotalTemporadas(), s.getEvaluacion(), s.getPoster(),
+                        s.getGenero(), s.getActores(), s.getSinopsis()))
+                .collect(Collectors.toList());
+    }
+```
+## Preparando el ambiente: código de la consulta JPQL
+En el video anterior, filtramos los episodios de una serie por temporada y utilizamos una consulta JPQL. Para que tú también puedas utilizarla, copia el código anterior y adiciónalo en la clase SerieRepository, encima del método obtenerEpisodiosPorTemporada
+```roomsql
+@Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s.id = :id AND e.temporada = :numeroTemporada")
+```
+El método completo, con query y firma, debe estar así:
+```roomsql
+@Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s.id = :id AND e.temporada = :numeroTemporada")
+    List<Episodio> obtenerTemporadasPorNumero(Long id, Long numeroTemporada);
+    
+```
+## Manos a la obra: retornando los top episodios de una serie
+Para ti que llegaste hasta aquí, tenemos un extra. Nuestro front-end recibió una modificación: en los detalles de la serie, además de exhibir todos los episodios de todas las temporadas y los episodios separados por cada temporada, también vamos a mostrar los top episodios de la serie. Puedes actualizar tu front haciendo un git checkout a la rama manos-en-la-masa y ejecutándolo. Se verá así:
+![img.png](img.png)
+Tu misión es configurar el endpoint "/series/id/temporadas/top". Hecho esto, al actualizar el front, aparecerán los top 5 episodios de la serie. En el ejemplo abajo están los top episodios de la serie "The Mandalorian":
+![img_1.png](img_1.png)
+
+## Lo que aprendimos
+### En esta clase, aprendiste cómo:
+- Trabajar de forma colaborativa. Vimos que es importante siempre probar exhaustivamente el código, más aún con registros diferentes. Solo así tenemos la confirmación de que nuestras búsquedas están correctas.
+- Pasar parámetros en la url. Usamos nuevamente la anotación @PathVariable y vimos que puede ser utilizada tanto con números como con cadenas. Para que funcione, basta con que pasemos el nombre del parámetro entre llaves en la url del @GetMapping, exactamente como está declarado en la función.
+- Comparar streams y búsquedas en la base de datos. Aprendimos que podemos utilizar tanto streams como consultas de la base de datos, no necesitamos restringirnos al uso exclusivo de uno de ellos. Basta con que analicemos la complejidad de las búsquedas, filtros y operaciones que haremos.
+- Desarrollar una aplicación de forma incremental. Al trabajar en la integración del front con el back-end, identificamos, a lo largo del tiempo, los requisitos necesarios para que todo funcione en conjunto. El trabajo incremental es muy común en el ambiente de desarrollo.
+
+
+
+
+
+
+
+
 
 
 

@@ -12,7 +12,7 @@ public class Principal {
     private Scanner teclado = new Scanner(System.in);
     private ConsumoAPI consumoApi = new ConsumoAPI();
     private final String URL_BASE = "https://www.omdbapi.com/?t=";
-    private final String API_KEY = "TU-APIKEY-OMDB";
+    private final String API_KEY = "&apikey=cd7a6ddc";
     private ConvierteDatos conversor = new ConvierteDatos();
     private List<DatosSerie> datosSeries = new ArrayList<>();
     private SerieRepository repositorio;
@@ -35,8 +35,7 @@ public class Principal {
                     6 - Buscar Series por categoría
                     7 - filtrar series por temporadas y evaluación
                     8 - Buscar episodios por titulo
-                    9 - Top 5 episodios por Serie
-                                  
+                    9 - Top 5 episodios por Serie                                  
                     0 - Salir
                     """;
             System.out.println(menu);

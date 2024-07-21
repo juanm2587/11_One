@@ -7,7 +7,7 @@ import java.util.OptionalDouble;
 
 @Entity
 @Table(name = "series")
-public class Serie {
+public class Serie{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
